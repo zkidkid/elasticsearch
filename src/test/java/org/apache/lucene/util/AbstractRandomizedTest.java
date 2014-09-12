@@ -45,13 +45,8 @@ import org.junit.runner.RunWith;
 import java.io.Closeable;
 import java.io.File;
 import java.lang.annotation.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
@@ -365,76 +360,6 @@ public abstract class AbstractRandomizedTest extends RandomizedTest {
     @Before
     public void setUp() throws Exception {
         parentChainCallRule.setupCalled = true;
-            final long seed = getRandom().nextLong();
-            ResettableThreadLocal threadlocal = ResettableThreadLocal.INSTANCE.get();
-            threadlocal.reset(seed);
-    }
-    static {
-        try {
-            setResettableThreadLocal(ThreadLocalRandom.class, "localRandom", 0);
-        } catch (Throwable e)  {
-            // TODO What should we do here? nothing?
-        }
-    }
-
-    private static ResettableThreadLocal setResettableThreadLocal(Class clazz, String fieldName, long seed) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        assert ResettableThreadLocal.INSTANCE.get() == null;
-        // remove final modifier from field
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        ResettableThreadLocal newValue =  new ResettableThreadLocal(seed);
-        field.set(null,  newValue);
-        return newValue;
-    }
-
-    public final static class ResettableThreadLocal extends ThreadLocal<ThreadLocalRandom> {
-        private final List<ThreadLocalRandom> all = new ArrayList<>();
-        private final Constructor<ThreadLocalRandom> constructor;
-        private final Field initialized;
-        private long seed;
-        static final SetOnce<ResettableThreadLocal> INSTANCE = new SetOnce<>();
-
-        public ResettableThreadLocal(long seed) throws IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
-            final Class<ThreadLocalRandom> clazz = ThreadLocalRandom.class;
-            INSTANCE.set(this);
-            constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            initialized = clazz.getDeclaredField("initialized");
-            initialized.setAccessible(true);
-            this.seed = seed;
-        }
-
-
-        protected ThreadLocalRandom initialValue() {
-            synchronized (all) {
-                try {
-                    ThreadLocalRandom random = (ThreadLocalRandom) constructor.newInstance();
-                    initialized.set(random, false);
-                    random.setSeed(seed);
-                    all.add(random);
-                    return random;
-                } catch (Throwable t) {
-                    throw new RuntimeException(t);
-                }
-            }
-        }
-
-        public void reset(final long seed) {
-            synchronized (all) {
-                this.seed = seed;
-                for (ThreadLocalRandom random : this.all) {
-                    try {
-                        initialized.set(random, false);
-                    } catch (Throwable t) {
-                        throw new RuntimeException(t);
-                    }
-                    random.setSeed(seed);
-                }
-            }
-        }
     }
 
     /**
