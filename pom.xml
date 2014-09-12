@@ -520,6 +520,13 @@
                                 <tests.security.manager>${tests.security.manager}</tests.security.manager>
                                 <tests.compatibility>${tests.compatibility}</tests.compatibility>
                                 <java.awt.headless>true</java.awt.headless>
+                                <!--
+                                The default threshold of map capacity above which alternative hashing is used for String
+                                keys. Alternative hashing reduces the incidence of collisions due to weak hash code
+                                calculation for String keys. This setting ensures that we don't rely on the iteration order of
+                                HashSet / HashMap in our code.
+                                -->
+                                <jdk.map.althashing.threshold>0</jdk.map.althashing.threshold>
                                 <!-- everything below is for security manager / test.policy -->
                                 <junit4.tempDir>${project.build.directory}</junit4.tempDir>
                                 <java.security.policy>${basedir}/dev-tools/tests.policy</java.security.policy>
