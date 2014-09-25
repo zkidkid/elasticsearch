@@ -25,6 +25,7 @@ import org.elasticsearch.discovery.MasterNotDiscoveredException;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest.ClusterScope;
+import org.elasticsearch.test.junit.annotations.TestLogging;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class SpecificMasterNodesTests extends ElasticsearchIntegrationTest {
     }
 
     @Test
+    @TestLogging("discovery.zen:TRACE,cluster.service:TRACE")
     public void simpleOnlyMasterNodeElection() throws IOException {
         logger.info("--> start data node / non master node");
         internalCluster().startNode(settingsBuilder().put("node.data", true).put("node.master", false).put("discovery.initial_state_timeout", "1s"));
@@ -75,6 +77,7 @@ public class SpecificMasterNodesTests extends ElasticsearchIntegrationTest {
     }
 
     @Test
+    @TestLogging("discovery.zen:TRACE,cluster.service:TRACE")
     public void electOnlyBetweenMasterNodes() throws IOException {
         logger.info("--> start data node / non master node");
         internalCluster().startNode(settingsBuilder().put("node.data", true).put("node.master", false).put("discovery.initial_state_timeout", "1s"));
@@ -106,6 +109,7 @@ public class SpecificMasterNodesTests extends ElasticsearchIntegrationTest {
      * to the type mapping.
      */
     @Test
+    @TestLogging("discovery.zen:TRACE,cluster.service:TRACE")
     public void testCustomDefaultMapping() throws Exception {
         logger.info("--> start master node / non data");
         internalCluster().startNode(settingsBuilder().put("node.data", false).put("node.master", true));
@@ -127,6 +131,7 @@ public class SpecificMasterNodesTests extends ElasticsearchIntegrationTest {
     }
 
     @Test
+    @TestLogging("discovery.zen:TRACE,cluster.service:TRACE")
     public void testAliasFilterValidation() throws Exception {
         logger.info("--> start master node / non data");
         internalCluster().startNode(settingsBuilder().put("node.data", false).put("node.master", true));
