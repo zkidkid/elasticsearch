@@ -30,7 +30,11 @@ import org.elasticsearch.env.FailedToResolveConfigException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.*;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 import java.util.Map;
@@ -99,6 +103,7 @@ public class LogConfigurator {
                 props.setProperty(key, value);
             }
         }
+        Log4jESLoggerFactory.getLogger("LogConfigurator").info("Log Configurator properties: " + props.toString());
         PropertyConfigurator.configure(props);
     }
 

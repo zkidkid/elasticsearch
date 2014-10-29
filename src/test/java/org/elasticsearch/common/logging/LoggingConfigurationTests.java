@@ -61,6 +61,7 @@ public class LoggingConfigurationTests extends ElasticsearchTestCase {
             Appender appender = (Appender) allAppenders.nextElement();
             this.logger.info("Found appender: {}", appender.getName());
         }
+        this.logger.info("End of found appenders.");
         Appender appender = logger.getAppender("console1");
         assertThat(appender, notNullValue());
 
