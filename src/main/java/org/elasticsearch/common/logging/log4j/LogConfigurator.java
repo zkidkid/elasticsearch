@@ -77,9 +77,12 @@ public class LogConfigurator {
             .immutableMap();
 
     public static void configure(Settings settings) {
+        Log4jESLoggerFactory.getLogger("LogConfigurator").info("LogConfigurator.configure started: " + settings.getAsMap());
         if (loaded) {
+            Log4jESLoggerFactory.getLogger("LogConfigurator").info("LogConfigurator.configure already Loaded");
             return;
         }
+        Log4jESLoggerFactory.getLogger("LogConfigurator").info("LogConfigurator.configure loading...");
         loaded = true;
         Environment environment = new Environment(settings);
         ImmutableSettings.Builder settingsBuilder = settingsBuilder().put(settings);
